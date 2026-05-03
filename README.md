@@ -129,7 +129,6 @@ benchmark_results.txt
 - All models: depth=6, embed_dim=256, num_heads=8, mlp_ratio=4.0
 - Same training hyperparameters and hardware for all experiments
 
-把这部分替换成：
 
 ```markdown
 **Implementation notes:**
