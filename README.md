@@ -135,6 +135,10 @@ benchmark_results.txt
 - We implement Circulant-STRING following Theorem 3.5 and Definition 3.1 of Schenck et al. (2025)
 - Original Performer paper used JAX on TPUs; our PyTorch implementation on CUDA explains the observed performance difference
 - CirculantSTRING uses vectorized FFT operations for efficiency (no Python for-loops)
+- We implement **Circulant-STRING** (not Cayley-STRING) because:
+  (1) Circulant-STRING achieves the best ImageNet accuracy (81.22%) among all STRING variants per Table 1 of Schenck et al. (2025)
+  (2) It admits an efficient O(d log d) FFT implementation as proven in Theorem 3.5
+  (3) Cayley-STRING requires matrix inverse computation (I+S)^{-1} which is more expensive
 
 ## References
 - Choromanski et al. (2020): Rethinking Attention with Performers. ICLR 2021. arXiv:2009.14794
