@@ -57,7 +57,9 @@ python benchmark_attention.py
 **Models:**
 - Model 1 (ViT): Standard softmax attention O(N²), absolute positional encoding
 - Model 2 (Performer): FAVOR+ linear attention O(N), r=256 random features, orthogonal features, with redrawing per epoch
-- Model 3 (Performer+STRING): FAVOR+ attention + Circulant-STRING relative positional encoding, based on Theorem 3.5 of Schenck et al. (2025)
+- Model 3 (Performer+STRING): FAVOR+ attention (m=128) with Circulant-STRING 
+  applied to Q and K before attention (Schenck et al., 2025). No absolute 
+  positional embedding. STRING parameters initialized with N(0, 0.02).
 
 **Result files:**
 ```
@@ -127,6 +129,9 @@ benchmark_results.txt
 - All models: depth=6, embed_dim=256, num_heads=8, mlp_ratio=4.0
 - Same training hyperparameters and hardware for all experiments
 
+把这部分替换成：
+
+```markdown
 **Implementation notes:**
 - No official PyTorch implementation exists for image classification with Performers
 - Official code targets autoregressive language modeling (unidirectional attention)
@@ -134,11 +139,16 @@ benchmark_results.txt
 - No official STRING implementation is publicly available
 - We implement Circulant-STRING following Theorem 3.5 and Definition 3.1 of Schenck et al. (2025)
 - Original Performer paper used JAX on TPUs; our PyTorch implementation on CUDA explains the observed performance difference
-- CirculantSTRING uses vectorized FFT operations for efficiency (no Python for-loops)
 - We implement **Circulant-STRING** (not Cayley-STRING) because:
-  (1) Circulant-STRING achieves the best ImageNet accuracy (81.22%) among all STRING variants per Table 1 of Schenck et al. (2025)
-  (2) It admits an efficient O(d log d) FFT implementation as proven in Theorem 3.5
+  (1) Circulant-STRING achieves the best ImageNet accuracy (81.22%) per Table 1 of Schenck et al. (2025)
+  (2) Efficient O(d log d) FFT implementation per Theorem 3.5
   (3) Cayley-STRING requires matrix inverse computation (I+S)^{-1} which is more expensive
+- STRING is applied to **queries (Q) and keys (K)** before FAVOR+ attention, following Schenck et al. (2025). CLS token is left unrotated (no spatial position)
+- Performer+STRING does **not** use absolute positional embeddings; Circulant-STRING provides relative positional encoding
+- Random features redrawn every 1,000 training steps to reduce estimator bias
+- num_random_features m = 4 × head_dim = 128 per head
+- CirculantSTRING uses vectorized FFT operations for efficiency (no Python for-loops)
+```
 
 ## References
 - Choromanski et al. (2020): Rethinking Attention with Performers. ICLR 2021. arXiv:2009.14794
