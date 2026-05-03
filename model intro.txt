@@ -1,0 +1,5 @@
+layers = 6
+embed_dim = 256
+num_heads = 8
+patch_size = 4
+img_size = 32
