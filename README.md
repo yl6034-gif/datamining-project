@@ -1,13 +1,54 @@
 # datamining-project
 
-这是一个很好的总结，我来写：
+```markdown
+# Efficient Vision Transformer Models
 
----
+## Overview
+Comparison of Regular ViT, Performer (FAVOR+), and Performer+Circulant-STRING 
+on image classification tasks (CIFAR-10, CIFAR-100, MNIST, Fashion-MNIST).
 
-# Experiment Summary
+## Models
+- **Model 1 (ViT)**: Regular Vision Transformer with standard softmax attention O(N²)
+- **Model 2 (Performer)**: FAVOR+ linear attention O(N), Choromanski et al. (2020)
+- **Model 3 (Performer+STRING)**: FAVOR+ attention + Circulant-STRING positional encoding, Schenck et al. (2025)
 
-## Block 1: Main Experiments (L=64, All 3 Models, 4 Datasets)
+## Requirements
+```
+pip install torch torchvision timm einops datasets
+```
 
+## File Structure
+```
+├── data_loader.py                   # Dataset loading (HuggingFace)
+├── model_vit.py                     # Model 1: Regular ViT
+├── model_performer.py               # Model 2: Performer (FAVOR+)
+├── model_performer_string.py        # Model 3: Performer + Circulant-STRING
+├── train.py                         # Training and evaluation pipeline
+├── run_vit.py                       # Run Model 1 on all 4 datasets
+├── run_performer.py                 # Run Model 2 on all 4 datasets
+├── run_performer_string.py          # Run Model 3 on all 4 datasets
+├── run_L256_10epoch_comparison.py   # L=256 comparison (ViT vs Performer)
+├── benchmark_attention.py           # Attention-only speed benchmark
+└── results/                         # Experiment results (JSON)
+```
+
+## Usage
+```bash
+# Main experiments (L=64, 20 epochs)
+python run_vit.py
+python run_performer.py
+python run_performer_string.py
+
+# L=256 comparison (10 epochs, CIFAR-10 only)
+python run_L256_10epoch_comparison.py
+
+# Attention benchmark
+python benchmark_attention.py
+```
+
+## Experiment Summary
+
+### Block 1: Main Experiments (L=64, All 3 Models, 4 Datasets)
 **Setup:**
 - img_size=32, patch_size=4 → sequence length L=(32/4)²=64
 - epochs=20, batch_size=128, lr=3e-4, optimizer=AdamW
@@ -20,23 +61,9 @@
 
 **Result files:**
 ```
-results_vit_mnist.json
-results_vit_fashion_mnist.json
-results_vit_cifar10.json
-results_vit_cifar100.json
-results_vit_all.json          ← merged
-
-results_performer_mnist.json
-results_performer_fashion_mnist.json
-results_performer_cifar10.json
-results_performer_cifar100.json
-results_performer_all.json    ← merged
-
-results_string_mnist.json
-results_string_fashion_mnist.json
-results_string_cifar10.json
-results_string_cifar100.json
-results_string_all.json       ← merged
+results_vit_all.json
+results_performer_all.json
+results_string_all.json
 ```
 
 **Key findings:**
@@ -46,19 +73,15 @@ results_string_all.json       ← merged
 
 ---
 
-## Block 2: Sequence Length Comparison (L=256, CIFAR-10 only)
-
+### Block 2: Sequence Length Comparison (L=256, CIFAR-10 only)
 **Setup:**
 - img_size=64, patch_size=4 → sequence length L=(64/4)²=256
 - epochs=10 (reduced due to computational constraints)
-- Same hardware and hyperparameters as Block 1
-- Only CIFAR-10 dataset, only ViT and Performer (no STRING)
+- Only CIFAR-10 dataset, only ViT and Performer
 
 **Result files:**
 ```
-results_vit_cifar10_L256.json
-results_performer_cifar10_L256.json
-results_L256_comparison.json  ← combined
+results_L256_comparison.json
 ```
 
 **Key findings:**
@@ -70,13 +93,11 @@ results_L256_comparison.json  ← combined
 
 ---
 
-## Block 3: Attention-Only Benchmark
-
+### Block 3: Attention-Only Benchmark
 **Setup:**
 - Isolated attention module benchmark (no training, no MLP, no data loading)
 - batch_size=8, embed_dim=256, num_heads=8, num_random_features=256
 - 50 runs per configuration, CUDA synchronized timing
-- Sequence lengths: 64, 128, 256, 512, 1024, 2048
 
 **Result file:**
 ```
@@ -95,18 +116,16 @@ benchmark_results.txt
 | 2048 | 81.177 | 25.472 | 3.19x |
 
 - FAVOR+ attention becomes faster than standard attention only at L≥1024
-- At L=64 (our main experiment), FAVOR+ is 2.6x slower
-- This explains why total training time is higher for Performer at L=64
-- Note: Model 2 (Performer) and Model 3 (Performer+STRING) share the same FAVOR+ attention. STRING only affects positional encoding, not attention computation
+- At L=64, FAVOR+ is 2.6x slower due to random feature computation overhead
+- Note: Model 2 and Model 3 share the same FAVOR+ attention. STRING only affects positional encoding
 
 ---
 
-## Important Notes
+## Important Implementation Notes
 
-**Fair comparison conditions:**
-- All models use identical architecture: depth=6, embed_dim=256, num_heads=8, mlp_ratio=4.0
-- Same training hyperparameters across all models
-- Same hardware (RTX 4060) for all experiments
+**Fair comparison:**
+- All models: depth=6, embed_dim=256, num_heads=8, mlp_ratio=4.0
+- Same training hyperparameters and hardware for all experiments
 
 **Implementation notes:**
 - No official PyTorch implementation exists for image classification with Performers
@@ -115,7 +134,13 @@ benchmark_results.txt
 - No official STRING implementation is publicly available
 - We implement Circulant-STRING following Theorem 3.5 and Definition 3.1 of Schenck et al. (2025)
 - Original Performer paper used JAX on TPUs; our PyTorch implementation on CUDA explains the observed performance difference
+- CirculantSTRING uses vectorized FFT operations for efficiency (no Python for-loops)
 
----
+## References
+- Choromanski et al. (2020): Rethinking Attention with Performers. ICLR 2021. arXiv:2009.14794
+- Schenck et al. (2025): Learning the RoPEs: Better 2D and 3D Position Encodings with STRING. arXiv:2502.02562
+```
 
-模型3跑完发我结果，我们就可以开始画图了 👇
+新建 `README.md` 把这个内容复制进去 ✅
+
+模型3第一个epoch跑完了吗？👇
