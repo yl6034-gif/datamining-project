@@ -140,7 +140,3 @@ benchmark_results.txt
 - Choromanski et al. (2020): Rethinking Attention with Performers. ICLR 2021. arXiv:2009.14794
 - Schenck et al. (2025): Learning the RoPEs: Better 2D and 3D Position Encodings with STRING. arXiv:2502.02562
 ```
-
-新建 `README.md` 把这个内容复制进去 ✅
-
-模型3第一个epoch跑完了吗？👇
