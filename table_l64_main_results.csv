@@ -1,0 +1,5 @@
+Dataset,ViT Acc (%),Performer Acc (%),STRING Acc (%),ViT Train (s),Performer Train (s),STRING Train (s),ViT Inf (s),Performer Inf (s),STRING Inf (s)
+mnist,99.16,98.93,99.05,1973.8,2795.7,2701.2,6.36,6.92,9.51
+fashion_mnist,91.2,90.38,90.32,1864.5,1913.5,2644.0,6.62,7.01,8.97
+cifar10,72.94,67.5,75.98,1560.1,1591.2,2202.3,6.61,6.79,8.77
+cifar100,45.47,43.07,52.15,1563.7,1603.6,2205.9,6.28,7.14,8.81

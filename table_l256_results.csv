@@ -1,0 +1,3 @@
+Model,Dataset,Best Val Acc (%),Train Time (s),Inference Time (s)
+ViT_L256,cifar10,70.59,1942.5,11.92
+Performer_L256,cifar10,60.27,17683.8,147.98

@@ -1,0 +1,7 @@
+Seq Len,ViT (ms),Performer (ms),Speedup,Faster Model
+64,1.051,1.58,0.67,ViT faster
+128,1.738,3.197,0.54,ViT faster
+256,3.394,4.708,0.72,ViT faster
+512,9.461,9.941,0.95,ViT faster
+1024,23.574,11.744,2.01,Performer faster
+2048,75.508,23.355,3.23,Performer faster
