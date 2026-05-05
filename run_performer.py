@@ -16,11 +16,11 @@ all_results = {}
 
 for dataset_name, num_classes in datasets.items():
     print(f"\n{'='*50}")
-    print(f"Running Performer (FAVOR+, r=256) on {dataset_name}")
+    print(f"Running Performer (FAVOR+, r=128) on {dataset_name}")  
     print(f"{'='*50}")
 
     model = PerformerViT(img_size=32, num_classes=num_classes,
-                         num_random_features=256)
+                         num_random_features=128)
     results = run_experiment(
         model, dataset_name, 'Performer',
         epochs=20, use_redraw=True,
@@ -33,7 +33,7 @@ with open('results_performer_all.json', 'w') as f:
     json.dump(all_results, f, indent=2)
 
 print(f"\n{'='*50}")
-print("FINAL RESULTS - Performer (FAVOR+, r=256)")
+print("FINAL RESULTS - Performer (FAVOR+, r=128)")
 print(f"{'='*50}")
 print(f"{'Dataset':<15} {'Val Acc':>8} {'Train Time':>12} {'Inf Time':>10}")
 print('-' * 50)
